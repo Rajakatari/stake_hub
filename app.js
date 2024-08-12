@@ -1,25 +1,13 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const mysql2 = require("mysql2");
+const db = require("./config");
 
 const app = express();
 const port = 4000;
 
 app.use(cors());
 app.use(bodyParser.json());
-
-const db = mysql2.createConnection({
-  host: "localhost",
-  database: "TradingPlatform",
-  user: "root",
-  password: "Katari123@",
-});
-
-db.connect((error) => {
-  if (error) throw error;
-  console.log("DB connected.");
-});
 
 function updateQuantity(type, price, qty) {
   const selectQuery = `SELECT * FROM pendingordertable WHERE ${type}_price = ?`;
@@ -195,6 +183,16 @@ app.get("/orders", (req, res) => {
           .json({ pendingBuyerOrders, pendingSellerOrders, completedOrders });
       });
     });
+  });
+});
+
+//api end point for delete completed order item
+app.delete("/completed_orders/:id", (req, res) => {
+  const deleteSqlQuery = `delete from completedordertable where id = ?;`;
+  const { id } = req.params;
+  db.query(deleteSqlQuery, [id], (error, result) => {
+    if (error) res.status(500).send(error);
+    res.status(200).json({ message: result });
   });
 });
 

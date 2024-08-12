@@ -10,7 +10,7 @@ app.use(cors());
 
 app.use(
   cors({
-    origin: "https://trading-orders-by-raja.netlify.app",
+    origin: "*",
     methods: ["GET", "POST","POST", "DELETE"],
   })
 );
